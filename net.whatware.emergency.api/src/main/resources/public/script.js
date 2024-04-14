@@ -351,8 +351,8 @@ function addDataPoint(dataPoint) {
 
 function openChat() {
   document.getElementById('chatModalLabel').innerText = `Chat with ${eventModalUser}`;
-  // TODO: Load chat messages
   chatModal.show();
+  eventModal.hide();
 }
 
 function openUserChat(user) {
