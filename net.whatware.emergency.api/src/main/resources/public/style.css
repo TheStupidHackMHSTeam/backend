@@ -1,0 +1,114 @@
+:root {
+  --mono-font: "Source Code Pro", Consolas, "Ubuntu Mono", Menlo,
+    "DejaVu Sans Mono", monospace, monospace;
+}
+
+/*
+ * Sidebar
+ */
+
+.sidebar .nav-link {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.sidebar .nav-link.active {
+  color: #2470dc;
+}
+
+.sidebar-heading {
+  font-size: 0.75rem;
+}
+
+#sidebarMenu {
+  height: 100vh;
+  overflow: scroll;
+  top: 0px;
+  width: 280px;
+  position: fixed;
+}
+
+.sidebar-header {
+  display: block;
+  padding: var(--bs-nav-link-padding-y) var(--bs-nav-link-padding-x);
+  font-size: var(--bs-nav-link-font-size);
+  font-weight: var(--bs-nav-link-font-weight);
+  color: rgba(
+    var(--bs-emphasis-color-rgb),
+    var(--bs-link-opacity, 1)
+  ) !important;
+  -webkit-text-decoration-color: rgba(
+    var(--bs-emphasis-color-rgb),
+    var(--bs-link-underline-opacity, 1)
+  ) !important;
+  text-decoration-color: rgba(
+    var(--bs-emphasis-color-rgb),
+    var(--bs-link-underline-opacity, 1)
+  ) !important;
+  background: none;
+  border: 0;
+  transition:
+    color 0.15s ease-in-out,
+    background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-header {
+    transition: none;
+  }
+}
+
+.sidebar-header:focus-visible {
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.sidebar-toggle {
+  border: none;
+  outline: none;
+  color: #ffffff;
+}
+
+/*
+ * Header
+ */
+
+.header:link,
+.header:visited {
+  color: var(--fg);
+}
+.header:link,
+.header:visited:hover {
+  text-decoration: none;
+}
+
+/*
+* Loading
+*/
+
+#loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/*
+ * Banner
+ */
+
+.banner {
+  padding: 0.5rem 1rem;
+}
+
+#disconnectedBanner {
+  background-color: var(--bs-form-invalid-color);
+  color: var(--bs-danger-border-subtle);
+}
