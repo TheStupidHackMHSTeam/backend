@@ -3,12 +3,17 @@ package net.whatware.emergency.api;
 import io.javalin.Javalin;
 import io.javalin.http.staticfiles.Location;
 import io.javalin.websocket.WsContext;
-import io.javalin.websocket.WsMessageContext;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import static j2html.TagCreator.article;
 import static j2html.TagCreator.attrs;
 import static j2html.TagCreator.b;
@@ -21,10 +26,13 @@ public class EmergencyAPI {
 	private static int nextUserNumber = 1; // Assign to username for next connecting user
 
 	public static void main(String[] args) {
+		ArrayList<Map<String, String>> requests = new ArrayList<Map<String, String>>();
+		Gson gson = new Gson();
+
 		Javalin app = Javalin.create(config -> {
 			config.staticFiles.add("/public", Location.CLASSPATH);
 			config.router.mount(router -> {
-				router.ws("/chat", ws -> {
+				router.ws("/chat/{path}", ws -> {
 					ws.onConnect(ctx -> {
 						String username = "User" + nextUserNumber++;
 						userUsernameMap.put(ctx, username);
@@ -41,22 +49,38 @@ public class EmergencyAPI {
 				});
 			});
 		});
-		
+
 		app.post("/reportfall", ctx -> {
-			System.out.println(ctx.queryParam("long"));
-			ctx.status(201);
+			Map<String, String> request = null;
+			try {
+				String requestBody = ctx.body();
+				TypeToken<HashMap<String, String>> mapType = new TypeToken<HashMap<String, String>>() {
+				};
+				Map<String, String> bodyMap = gson.fromJson(requestBody, mapType);
+				System.out.println(ctx.body());
+				System.out.println(bodyMap);
+				request = bodyMap;
+			} catch (Exception e) {
+				ctx.status(400);
+			}
+			if (request == null) {
+				ctx.status(400);
+			} else {
+				requests.add(request);
+				ctx.status(201);
+			}
 		});
-		
+
 		app.ws("/dashsocket", ws -> {
-		    ws.onConnect(ctx -> System.out.println("Connected"));
-		    ws.onMessage(ctx -> {
-		        ctx.send(ctx.message()); // convert to json and send back
-		    });
-		    ws.onBinaryMessage(ctx -> System.out.println("Message"));
-		    ws.onClose(ctx -> System.out.println("Closed"));
-		    ws.onError(ctx -> System.out.println("Errored"));
+			ws.onConnect(ctx -> ctx.send(gson.toJson(requests))); // TODO - send json of all previous requests
+			ws.onMessage(ctx -> {
+				ctx.send(ctx.message()); // convert to json and send back
+			});
+			ws.onBinaryMessage(ctx -> System.out.println("Message"));
+			ws.onClose(ctx -> System.out.println("Closed"));
+			ws.onError(ctx -> System.out.println("Errored"));
 		});
-		
+
 		app.start(9090);
 	}
 
