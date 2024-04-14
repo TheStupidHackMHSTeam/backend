@@ -1,0 +1,58 @@
+:root {
+  --mono1: #3A3332;
+  --mono2: #5D5651;
+  --mono3: #CDBDB4;
+  --mono4: #FEFAF6;
+  --blue: #73B0A3;
+}
+
+body {
+  background-color: var(--mono1);
+  color: var(--mono4);
+  font-family: sans-serif;
+  height: 100.001vh;
+  margin: 0;
+}
+#chat {margin-bottom:3rem;}
+#chat * {
+  overflow-anchor: none;
+}
+
+#chat > article { padding: .5rem}
+  #chat>article>b {color: var(--blue);}
+  #chat>article>p {margin: .25rem 0;}
+  .timestamp {
+    color: var(--mono3);
+    font-size: .75rem;
+  }
+
+#chatControls {
+  display: flex; gap: 1rem;
+  justify-content: center;
+  position: fixed; padding: .5rem;
+  bottom: 0; left: 0; width: 100%;
+  box-sizing: border-box;
+  background-color: var(--mono1);
+}
+#message, #send {
+  background-color: var(--mono2);
+  border: 0; padding: .5rem 1rem; border-radius: 5rem;
+  color: var(--mono3); font-size: 1rem;
+  flex-grow: 1; flex-shrink: 1;
+  min-width: 0;
+}
+#send {
+  background-color: var(--blue);
+  color: var(--mono4);
+  text-align: center;
+  flex-grow: 0; flex-shrink: 0;
+  min-width: 4rem;
+}
+#message:focus {
+  outline: 2px solid var(--blue);
+}
+
+#anchor {
+  overflow-anchor: auto;
+  height: 1px;
+}
