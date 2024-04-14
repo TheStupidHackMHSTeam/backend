@@ -2,6 +2,8 @@ package net.whatware.emergency.api;
 
 import io.javalin.Javalin;
 import io.javalin.http.staticfiles.Location;
+import io.javalin.websocket.WsConfig;
+import io.javalin.websocket.WsConnectContext;
 import io.javalin.websocket.WsContext;
 
 import java.text.SimpleDateFormat;
@@ -24,6 +26,8 @@ public class EmergencyAPI {
 
 	private static final Map<WsContext, String> userUsernameMap = new ConcurrentHashMap<>();
 	private static int nextUserNumber = 1; // Assign to username for next connecting user
+
+	private static ArrayList<WsConnectContext> wsCtxs = new ArrayList<WsConnectContext>();
 
 	public static void main(String[] args) {
 		ArrayList<Map<String, String>> requests = new ArrayList<Map<String, String>>();
@@ -61,6 +65,10 @@ public class EmergencyAPI {
 				System.out.println(ctx.body());
 				System.out.println(bodyMap);
 				request = bodyMap;
+
+				for (WsConnectContext wsCtx : wsCtxs) {
+					wsCtx.send(gson.toJson(request));
+				}
 			} catch (Exception e) {
 				ctx.status(400);
 			}
@@ -73,13 +81,22 @@ public class EmergencyAPI {
 		});
 
 		app.ws("/dashsocket", ws -> {
-			ws.onConnect(ctx -> ctx.send(gson.toJson(requests))); // TODO - send json of all previous requests
+			ws.onConnect(ctx -> {
+				ctx.send(gson.toJson(requests));
+				wsCtxs.add(ctx);
+			}); // TODO - send json of all previous requests
 			ws.onMessage(ctx -> {
 				ctx.send(ctx.message()); // convert to json and send back
 			});
 			ws.onBinaryMessage(ctx -> System.out.println("Message"));
-			ws.onClose(ctx -> System.out.println("Closed"));
-			ws.onError(ctx -> System.out.println("Errored"));
+			ws.onClose(ctx -> {
+				System.out.println("Closed");
+				wsCtxs.remove(ctx);
+			});
+			ws.onError(ctx -> {
+				System.out.println("Errored");
+				wsCtxs.remove(ctx);
+			});
 		});
 
 		app.start(9090);
