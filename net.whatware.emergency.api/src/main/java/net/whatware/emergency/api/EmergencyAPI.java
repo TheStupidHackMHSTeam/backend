@@ -57,6 +57,7 @@ public class EmergencyAPI {
 				TypeToken<HashMap<String, String>> mapType = new TypeToken<HashMap<String, String>>() {
 				};
 				Map<String, String> bodyMap = gson.fromJson(requestBody, mapType);
+				bodyMap.put("timestamp", Long.toString(System.currentTimeMillis() / 1000L));
 				System.out.println(ctx.body());
 				System.out.println(bodyMap);
 				request = bodyMap;

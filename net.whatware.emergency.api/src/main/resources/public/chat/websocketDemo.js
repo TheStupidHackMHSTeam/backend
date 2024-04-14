@@ -1,10 +1,19 @@
 // small helper function for selecting element by id
 let id = id => document.getElementById(id);
 
+function error(text) {
+	id("error").innerHTML = text;
+	id("error").style.display = 'block';
+}
+
 //Establish the WebSocket connection and set up event handlers
 let ws = new WebSocket("ws://" + location.hostname + ":" + location.port + "/chat");
 ws.onmessage = msg => updateChat(msg);
-ws.onclose = () => alert("WebSocket connection closed");
+ws.onclose = function () {
+	error("WebSocket connection closed");
+	id("message").disabled = true;
+	alert("WebSocket connection closed");
+}
 
 // Add event listeners to button and input field
 id("send").addEventListener("click", () => sendAndClear(id("message").value));

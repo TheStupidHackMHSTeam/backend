@@ -56,3 +56,12 @@ body {
   overflow-anchor: auto;
   height: 1px;
 }
+
+#error {
+  display: none;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  color: red;
+}
+
