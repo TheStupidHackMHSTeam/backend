@@ -6,8 +6,15 @@ function error(text) {
 	id("error").style.display = 'block';
 }
 
+const urlParams = new URLSearchParams(window.location.search);
+const user = urlParams.get('user');
+if (!user) {
+	alert("Missing username in URL!");
+	throw new Error("Missing username in URL!");
+}
+
 //Establish the WebSocket connection and set up event handlers
-let ws = new WebSocket("ws://" + location.hostname + ":" + location.port + "/chat");
+let ws = new WebSocket("ws://" + location.hostname + ":" + location.port + "/chat/" + user);
 ws.onmessage = msg => updateChat(msg);
 ws.onclose = function () {
 	error("WebSocket connection closed");
@@ -31,8 +38,16 @@ function sendAndClear(message) {
 }
 
 function updateChat(msg) { // Update chat-panel and list of connected users
+	if (msg.data == "^^^^^^^PONG^^^") {
+		console.log("rx pong");
+		return;
+	}
     let data = JSON.parse(msg.data);
     id("anchor").insertAdjacentHTML("beforebegin", data.userMessage);
     document.getElementById("anchor").scrollIntoView();
 
 }
+
+setInterval(() => {
+	ws.send("^^^^^^^PING^^^");
+}, 5000);

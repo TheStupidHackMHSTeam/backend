@@ -25,7 +25,7 @@ import static j2html.TagCreator.span;
 public class EmergencyAPI {
 
 	private static final Map<WsContext, String> userUsernameMap = new ConcurrentHashMap<>();
-	private static int nextUserNumber = 1; // Assign to username for next connecting user
+//	private static int nextUserNumber = 1; // Assign to username for next connecting user
 
 	private static ArrayList<WsConnectContext> wsCtxs = new ArrayList<WsConnectContext>();
 
@@ -36,9 +36,10 @@ public class EmergencyAPI {
 		Javalin app = Javalin.create(config -> {
 			config.staticFiles.add("/public", Location.CLASSPATH);
 			config.router.mount(router -> {
-				router.ws("/chat/{path}", ws -> {
+				router.ws("/chat/{user}", ws -> {
 					ws.onConnect(ctx -> {
-						String username = "User" + nextUserNumber++;
+//						String username = "User" + nextUserNumber++;
+						String username = ctx.pathParam("user");
 						userUsernameMap.put(ctx, username);
 						broadcastMessage("Server", (username + " joined the chat"));
 					});
@@ -48,6 +49,10 @@ public class EmergencyAPI {
 						broadcastMessage("Server", (username + " left the chat"));
 					});
 					ws.onMessage(ctx -> {
+						if (ctx.message().equals("^^^^^^^PING^^^")) {
+							ctx.send("^^^^^^^PONG^^^");
+							return;
+						}
 						broadcastMessage(userUsernameMap.get(ctx), ctx.message());
 					});
 				});
